@@ -31,7 +31,7 @@ double getQuicksortTime(int *a, int n);
 int randomPartition(int *a, int p, int r);
 int random_selection(int* arr, int p, int r, int k);
 int partition(int arr[], int l, int r, int x);
-int kthSmallest(int arr[], int l, int r, int k);
+int select(int arr[], int l, int r, int k);
 int findMedian(int arr[], int n);
 int *generateRandomPermutation(int n);
 double getRandSelectTime(int *a, int n, int k);
@@ -40,7 +40,7 @@ int random_selectionDemonstration(int* arr, int p, int r, int k);
 void printArray(int * array, int size);
 int randomPartitionDemonstration(int *a, int p, int r);
 int findMedianDemonstration(int arr[], int n);
-int kthSmallestDemonstration(int arr[], int l, int r, int k);
+int selectDemonstration(int arr[], int l, int r, int k);
 int findMaxArrayElement(Counter *a, int n);
 int getArrayAvg(Counter *a, int n);
 int findMinArrayElement(Counter *a, int n);
@@ -145,7 +145,7 @@ printf("[");
     printf("]\n");
 
 
-x = kthSmallest(aaa, 0, arraySize -1, selectionNumber);
+x = select(aaa, 0, arraySize -1, selectionNumber);
     printf("\n\n Selection\n" );
     printf("-----------------------------------------------------------\n" );
     printf("[");
@@ -190,7 +190,7 @@ if(programMode == '3'){
   printf("\n\n Selection\n" );
   printf("-----------------------------------------------------------\n" );
 
-kthSmallestDemonstration(aaa, 0, arraySize -1, selectionNumber);
+selectDemonstration(aaa, 0, arraySize -1, selectionNumber);
   exit(1);
 }
   if(programMode == '4'){
@@ -285,33 +285,10 @@ free(randomSelectionCounter);
 free(selectionCounter);
 
 
-
-// int arr[] = {12, 3, 5, 7, 4, 19, 26};
-//
-// printf("%d\n",random_selectionDemonstration(arr, 0, 6, 2) );
-
-
-// int *a;
-// a = generateRandomPermutation(100);
-// for(int i = 0; i < 100; i++){
-//   printf("%d\n",a[i] );
-// }
-
-
-// int arr[] = {12, 3, 5, 7, 4, 19, 26};
-// int n = sizeof(arr)/sizeof(arr[0]), k = 3;
-// printf("K'th smallest element is %d\n",kthSmallest(arr, 0, n-1, k));
-
-// int A[] = {9,5,7,1,10,2,3};
-// int loc = random_selection(A, 0,6,5);
-// printf("%d\n",loc );
-
-
   return 0;
 }
 
 int randomPartition(int *a, int p, int r){
-  // srand(time(NULL));
   int pivotIndex = p + rand()% (r-p);
   swap(a, pivotIndex, p);
   int x = a[p], i = p, j, buffor;
@@ -345,7 +322,6 @@ int random_selection(int* arr, int p, int r, int k)
     int mid = randomPartition(arr, p, r);
     int i = mid - p + 1;
     if(i == k){
-    //   printf("random selection  index = %d\n", mid );
     randomSelectionIndex = mid;
     return arr[mid];
     }
@@ -357,47 +333,34 @@ int random_selection(int* arr, int p, int r, int k)
 
 }
 
-int kthSmallest(int arr[], int l, int r, int k)
+int select(int arr[], int l, int r, int k)
 {
-    // If k is smaller than number of elements in array
     if (k > 0 && k <= r - l + 1)
     {
-        int n = r-l+1; // Number of elements in arr[l..r]
+        int n = r-l+1;
 
-        // Divide arr[] in groups of size 5, calculate median
-        // of every group and store it in median[] array.
-        int i, median[(n+4)/5]; // There will be floor((n+4)/5) groups;
+        int i, median[(n+4)/5];
         for (i=0; i<n/5; i++)
             median[i] = findMedian(arr+l+i*5, 5);
-        if (i*5 < n) //For last group with less than 5 elements
+        if (i*5 < n)
         {
             median[i] = findMedian(arr+l+i*5, n%5);
             i++;
         }
-
-        // Find median of all medians using recursive call.
-        // If median[] has only one element, then no need
-        // of recursive call
         int medOfMed = (i == 1)? median[i-1]:
-                                 kthSmallest(median, 0, i-1, i/2);
+                                 select(median, 0, i-1, i/2);
 
-        // Partition the array around a random element and
-        // get position of pivot element in sorted array
         int pos = partition(arr, l, r, medOfMed);
 
-        // If position is same as k
         if (pos-l == k-1){
           selectionIndex = pos;
           return arr[pos];
         }
-        if (pos-l > k-1)  // If position is more, recur for left
-            return kthSmallest(arr, l, pos-1, k);
+        if (pos-l > k-1)
+            return select(arr, l, pos-1, k);
 
-        // Else recur for right subarray
-        return kthSmallest(arr, pos+1, r, k-pos+l-1);
+        return select(arr, pos+1, r, k-pos+l-1);
     }
-
-    // If k is more than number of elements in array
     selectionIndex = INT_MAX;
     return INT_MAX;
 }
@@ -562,7 +525,7 @@ double getSelectTime(int *a, int n, int k){
   double seconds;
   aa = copyArray(a, n);
   start = clock();
-  kthSmallest(aa, 0, n - 1, k);
+  select(aa, 0, n - 1, k);
   end = clock();
   seconds = (double)(end - start) / CLOCKS_PER_SEC;
   free(aa);
@@ -663,7 +626,7 @@ void printArray(int * array, int size){
 }
 
 
-int kthSmallestDemonstration(int arr[], int l, int r, int k)
+int selectDemonstration(int arr[], int l, int r, int k)
 {
     // If k is smaller than number of elements in array
     if (k > 0 && k <= r - l + 1)
@@ -688,7 +651,7 @@ int kthSmallestDemonstration(int arr[], int l, int r, int k)
         // If median[] has only one element, then no need
         // of recursive call
         int medOfMed = (i == 1)? median[i-1]:
-                                 kthSmallestDemonstration(median, 0, i-1, i/2);
+                                 selectDemonstration(median, 0, i-1, i/2);
 
         printf("determine median of medians = %d\n", medOfMed );
 
@@ -705,10 +668,10 @@ int kthSmallestDemonstration(int arr[], int l, int r, int k)
           return arr[pos];
         }
         if (pos-l > k-1)  // If position is more, recur for left
-            return kthSmallestDemonstration(arr, l, pos-1, k);
+            return selectDemonstration(arr, l, pos-1, k);
 
         // Else recur for right subarray
-        return kthSmallestDemonstration(arr, pos+1, r, k-pos+l-1);
+        return selectDemonstration(arr, pos+1, r, k-pos+l-1);
     }
 
     // If k is more than number of elements in array

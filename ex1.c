@@ -120,38 +120,11 @@ for(i = 0; i < foo; i++){
 }
  fclose(fp);
 
-
-
-
-// int naa = 10001;
-//  int *aaa1 = getRandomArray(naa, 123121);
-//  int *aaa2 = copyArray(aaa1, naa);
-//  int *aaa3 = copyArray(aaa1, naa);
-//
-//  insertionSort(aaa2, naa);
-//  // quicksort(aaa1, 0, naa - 1);
-//  mergeSort(aaa1 , 0, naa - 1);
-//  // mergeSort2(aaa1, 0, naa - 1);
-//  compareArrays(aaa1, aaa2, naa);
-
-
-// displayArray(aaa, 100);
-
  system("libreoffice --calc test.csv &");
  free(insertionSortCounter);
  free(mergeSortCounter);
  free(quicksortCounter);
  free(radixSortCounter);
-
-// int a[] = {31, 55, 8, 15, 69, 46, 12, 32, 46, 43};
-// int n = 10;
-// int *a, n = 10;
-// a = getRandomArray(n, 123);
-// radixSort(a, n);
-// int i;
-// for(i = 0; i < n; i++){
-//   printf("%d, ",a[i] );
-// }
 
   return 0;
 }
