@@ -156,6 +156,21 @@ for(i = 0; i < foo; i++){
   return 0;
 }
 
+
+int findLargestNum(int * array, int size){
+
+  int i;
+  int largestNum = -1;
+
+  for(i = 0; i < size; i++){
+    radixSortInfo.comparisonNumber++;
+    if(array[i] > largestNum)
+      largestNum = array[i];
+  }
+
+  return largestNum;
+}
+
 void radixSort(int * array, int size){
   int i;
   int *semiSorted;
@@ -517,20 +532,6 @@ double getRadixSortTime(int *a, int n){
   seconds = (double)(end - start) / CLOCKS_PER_SEC;
   free(aa);
   return seconds;
-}
-
-int findLargestNum(int * array, int size){
-
-  int i;
-  int largestNum = -1;
-
-  for(i = 0; i < size; i++){
-    radixSortInfo.comparisonNumber++;
-    if(array[i] > largestNum)
-      largestNum = array[i];
-  }
-
-  return largestNum;
 }
 
 void radixSortDemonstration(int * array, int size){

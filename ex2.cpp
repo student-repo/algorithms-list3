@@ -9,6 +9,11 @@ using namespace std;
 #define RED   "\x1B[31m"
 #define RESET "\x1B[0m"
 
+typedef struct Counter{
+  int comparisonNumber;
+  int swapNumber;
+}Counter;
+
 int *insertionSort(int *a, int n); //a - array, n - length
 int partition(int *a, int p, int r);
 void swap(int *A, int i, int j);
@@ -36,6 +41,10 @@ void printArray(int * array, int size);
 int randomPartitionDemonstration(int *a, int p, int r);
 int findMedianDemonstration(int arr[], int n);
 int kthSmallestDemonstration(int arr[], int l, int r, int k);
+int findMaxArrayElement(Counter *a, int n);
+int getArrayAvg(Counter *a, int n);
+int findMinArrayElement(Counter *a, int n);
+
 
 
 
@@ -43,27 +52,23 @@ int randomSelectionIndex;
 int selectionIndex;
 
 
-typedef struct Counter{
-  int comparisonNumber;
-  int swapNumber;
-}Counter;
-
 Counter randomSelectionInfo = {0, 0}, selectionInfo = {0, 0};
 
 int main(){
-  int *a, *insertionSortArray, *mergeSortArray, *quicksortArray, range, arraySize, foo, i, *aa, *aaa, selectionNumber, interval = 1;
+  int *a, *insertionSortArray, *mergeSortArray, *quicksortArray, range, arraySize, foo, i, *aa, *aaa, selectionNumber, interval = 1, k, testNumber;
   char arrayType, programMode;
   double seconds;
   FILE *fp;
-  srand(time(NULL));
+  // srand(time(NULL));
   clock_t start = clock();
   clock_t end = clock();
   printf("1. Single selection test\n");
-  printf("2. Statistics\n" );
+  printf("2. Statistics growing data\n" );
   printf("3. Work demonstration\n" );
+  printf("4. Statistics same size data data\n" );
   printf("chose: ");
   scanf("%c", &programMode);
-  while(programMode != '1' && programMode != '2'&& programMode != '3'){
+  while(programMode != '1' && programMode != '2'&& programMode != '3' && programMode != '4'){
     printf("Incorrect intput! \n");
     printf("choose: ");
     scanf("%c", &programMode);
@@ -188,10 +193,56 @@ if(programMode == '3'){
 kthSmallestDemonstration(aaa, 0, arraySize -1, selectionNumber);
   exit(1);
 }
+  if(programMode == '4'){
+    printf("test number: ");
+    scanf("%d",&testNumber);
+
+    Counter *randomSelectionCounter, *selectionCounter;
+    randomSelectionCounter = new Counter[testNumber];
+    selectionCounter = new Counter[testNumber];
+
+    fp = fopen("test.csv", "w+");
+    fprintf(fp, "Data size,random selection time,selection time,     ,\n");
+
+    for(i = 0; i < testNumber; i++){
+      if(arrayType == '1'){
+        a = getRandomArray(arraySize, range);
+      }
+      else{
+        a = generateRandomPermutation(arraySize);
+      }
+      // printArray(a, arraySize);
+
+      fprintf(fp, "%d,",arraySize);
+      k = rand() % arraySize;
+      fprintf(fp, "%.10e,",getRandSelectTime(a, arraySize, k));
+      fprintf(fp, "%.10e\n",getSelectTime(a, arraySize, k));
+      // free(a);
+      delete[] a;
+      randomSelectionCounter[i].comparisonNumber = randomSelectionInfo.comparisonNumber;
+      selectionCounter[i].comparisonNumber = selectionInfo.comparisonNumber;
+      resetCounrers();
+    }
 
 
+    printf("\n\n" );
 
-int k;
+    // fp = fopen("test.csv", "w+");
+    int randMax, randMin, randAvg, selectMax, selectMin, selectAvg;
+    fprintf(fp, "Data size,Random selection comparison,Selection comparison\n");
+    for(i = 0; i < testNumber; i++){
+      fprintf(fp, "%d,%d,%d\n", arraySize, randomSelectionCounter[i].comparisonNumber, selectionCounter[i].comparisonNumber);
+    }
+     fclose(fp);
+
+     printf("Random select minComparison = %d avgComparison = %d maxComparison = %d \n",findMinArrayElement(randomSelectionCounter, testNumber),getArrayAvg(randomSelectionCounter, testNumber),findMaxArrayElement(randomSelectionCounter, testNumber) );
+
+    printf("select minComparison = %d avgComparison = %d maxComparison = %d \n",findMinArrayElement(selectionCounter, testNumber),getArrayAvg(selectionCounter, testNumber),findMaxArrayElement(selectionCounter, testNumber) );
+     system("libreoffice --calc test.csv &");
+    free(randomSelectionCounter);
+    free(selectionCounter);
+    exit(1);
+  }
 
 foo = arraySize / interval;
 Counter *randomSelectionCounter, *selectionCounter;
@@ -210,7 +261,6 @@ for(i = 1; i <= foo; i++){
   }
 
   fprintf(fp, "%d,",i * interval);
-  srand(time(NULL));
   k = rand() % (i * interval);
   fprintf(fp, "%.10e,",getRandSelectTime(a, i * interval, k));
   fprintf(fp, "%.10e\n",getSelectTime(a, i * interval, k));
@@ -261,7 +311,7 @@ free(selectionCounter);
 }
 
 int randomPartition(int *a, int p, int r){
-  srand(time(NULL));
+  // srand(time(NULL));
   int pivotIndex = p + rand()% (r-p);
   swap(a, pivotIndex, p);
   int x = a[p], i = p, j, buffor;
@@ -395,7 +445,7 @@ int *insertionSort(int *a, int n){
     while((i >= 0) && (a[i] > key)){
       a[i + 1] = a[i];
       i--;
-      randomSelectionInfo.comparisonNumber++;
+      selectionInfo.comparisonNumber++;
     }
     a[i + 1] = key;
   }
@@ -451,7 +501,6 @@ void quicksort(int *a, int p, int r){
   int *getRandomArray(int n, int range){
     int *a, r, k, i;
     a = new int[n];
-    srand(time(NULL));
     for(i = 0; i < n; i++){
       r = rand() % range;
       k = rand() % 2;
@@ -541,7 +590,7 @@ int *generateRandomPermutation(int n){
     a[i] = i;
   }
   int index;
-  srand(time(NULL));
+  // srand(time(NULL));
   for(int j = 0; j < n; j++){
     index = rand() % n;
     swap(a, index, j);
@@ -589,7 +638,7 @@ int random_selectionDemonstration(int* arr, int p, int r, int k)
 }
 
 int randomPartitionDemonstration(int *a, int p, int r){
-  srand(time(NULL));
+  // srand(time(NULL));
   int pivotIndex = p + rand()% (r-p);
   printf("pivot = %d\n",a[pivotIndex] );
   swap(a, pivotIndex, p);
@@ -672,4 +721,34 @@ int findMedianDemonstration(int arr[], int n)
     // sort(arr, arr+n);  // Sort the array
     insertionSort(arr, n);
     return arr[n/2];   // Return middle element
+}
+
+int findMinArrayElement(Counter *a, int n){
+  int i, min;
+  min = a[0].comparisonNumber;
+  for(i = 0; i < n; i++){
+  if(a[i].comparisonNumber < min){
+    min = a[i].comparisonNumber;
+  }
+  }
+  return min;
+}
+
+int findMaxArrayElement(Counter *a, int n){
+  int i, max;
+  max = a[0].comparisonNumber;
+  for(i = 0; i < n; i++){
+  if(a[i].comparisonNumber > max){
+    max = a[i].comparisonNumber;
+  }
+  }
+  return max;
+}
+
+int getArrayAvg(Counter *a, int n){
+  int sum = 0, i;
+  for(i = 0; i < n; i++){
+    sum += a[i].comparisonNumber;
+  }
+  return sum / n;
 }
