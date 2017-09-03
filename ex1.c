@@ -93,10 +93,10 @@ for(i = 1; i <= foo; i++){
 
   fprintf(fp, "%d,",i * 100);
   fprintf(fp, "%.10e,",getRadixSortTime(a, i * 100));
-  // fprintf(fp, "%.10e,",getInsertionSortTime(a, i * 100));
+//   fprintf(fp, "%.10e,",getInsertionSortTime(a, i * 100));
   fprintf(fp, "%.10e,",0);
-  // fprintf(fp, "%.10e,", getMergesortTime(a, i * 100));
-  fprintf(fp, "%.10e,",0);
+   fprintf(fp, "%.10e,", getMergesortTime(a, i * 100));
+//  fprintf(fp, "%.10e,",0);
   fprintf(fp, "%.10e\n",getQuicksortTime(a, i * 100));
   free(a);
   insertionSortCounter[i - 1].comparisonNumber = insertionSortInfo.comparisonNumber;
